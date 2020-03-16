@@ -18,7 +18,7 @@ def extract_books_from_result(soup):
 
         except:
             None
-
+    print(returner)
     returner_df = pd.DataFrame(returner, columns=['books','authors'])
 
     return returner_df
@@ -27,5 +27,3 @@ url = 'https://www.penguin.co.uk/articles/2018/100-must-read-classic-books/'
 r = requests.get(url)
 soup = BeautifulSoup(r.text,'html.parser')
 results = extract_books_from_result(soup)
-
-print(results)
