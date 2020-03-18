@@ -15,7 +15,8 @@ def extract_books_from_result(soup, desiredTitle):
     for book in soup.find_all('div', attrs={'class':'cp-search-result-item-content'}):
         try:
             title = book.find('span', attrs={'class':'title-content'}).text
-            if title == returner[0]:
+            remove = string.punctuation + string.whitespace
+            if title.translate(None, remove) == returner[0].translate(None, remove):
                 bookFormats = get_book_formats_from_book(book)
                 for bookFormat in bookFormats:
                     if bookFormat == "eBook":
