@@ -24,7 +24,7 @@ def add_search_URLs(listOfTitles, baseLibraryURL):
     titlesWithURLs = []
     for title in listOfTitles:
         #need to just get the title before a : or a () because later on in the process, we only grab the base title from the HTML parsing
-        baseTitle = title.split(':')[0].split('(')[0].strip()
+        baseTitle = title.split(':')[0].split('(')[0].split('!')[0].strip()
         encodedTitle = urllib.parse.quote_plus(title)
         titleWithURL = [baseTitle, title, baseLibraryURL + encodedTitle]
         titlesWithURLs.append(titleWithURL)
