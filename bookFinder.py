@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 def retrieve_book_listing_from_url(url):
-    r = requests.get(url[1])
+    r = requests.get(url[2])
     soup = BeautifulSoup(r.text,'html.parser')
     results = extract_books_from_result(soup,url[0])
     return results
@@ -50,10 +50,3 @@ def build_full_results_from_search(urls):
         allBookData.append(currentBookData)
     print(allBookData)
     return allBookData
-
-urls = [['The Way of Kings','https://jeffcolibrary.bibliocommons.com/v2/search?query=The+Way+of+Kings&searchType=title'],
-['The Brothers K','https://jeffcolibrary.bibliocommons.com/v2/search?query=The+Brothers+K&searchType=title'],
-['The Looming Tower','https://jeffcolibrary.bibliocommons.com/v2/search?query=The+Looming+Tower%3A+Al-Qaeda+and+the+Road+to+9%2F11&searchType=title'],
-['Carbon Dharma: The Occupation of Butterflies','https://jeffcolibrary.bibliocommons.com/v2/search?query=Carbon+Dharma%3A+The+Occupation+of+Butterflies&searchType=title'],
-['Raising White Kids','https://jeffcolibrary.bibliocommons.com/v2/search?query=Raising+White+Kids%3A+Bringing+Up+Children+in+a+Racially+Unjust+America&searchType=title']]
-build_full_results_from_search(urls)

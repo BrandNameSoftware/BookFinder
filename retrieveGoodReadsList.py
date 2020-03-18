@@ -2,6 +2,7 @@ import requests
 import json
 import xml.etree.ElementTree as ET
 import urllib.parse
+import bookFinder as bookFinder
 
 def get_book_titles_from_Goodreads():
     with open('goodreads.credentials.json') as f:
@@ -17,7 +18,6 @@ def get_book_titles_from_Goodreads():
         title = review.find('book').find('title').text
         titles.append(title)
 
-    #print(titles)
     return titles
 
 def add_search_URLs(listOfTitles, baseLibraryURL):
@@ -29,8 +29,8 @@ def add_search_URLs(listOfTitles, baseLibraryURL):
         titleWithURL = [baseTitle, title, baseLibraryURL + encodedTitle]
         titlesWithURLs.append(titleWithURL)
 
-    print(titlesWithURLs)
     return titlesWithURLs
 
 listOfTitles = get_book_titles_from_Goodreads()
-add_search_URLs(listOfTitles, "https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query=")
+titlesWithURLs = add_search_URLs(listOfTitles, "https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query=")
+bookFinder.build_full_results_from_search(titlesWithURLs)
