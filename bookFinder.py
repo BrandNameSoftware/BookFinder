@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import numpy as np
 import pandas as pd
+import sys
+import string
 
 def retrieve_book_listing_from_url(url):
     r = requests.get(url[2])
@@ -15,8 +17,10 @@ def extract_books_from_result(soup, desiredTitle):
     for book in soup.find_all('div', attrs={'class':'cp-search-result-item-content'}):
         try:
             title = book.find('span', attrs={'class':'title-content'}).text
-            remove = string.punctuation + string.whitespace
-            if title.translate(None, remove) == returner[0].translate(None, remove):
+            removeChars = string.punctuation + string.whitespace
+            noPunctuationDesiredTitle = title.translate(str.maketrans('', '', removeChars))
+            htmlTitleWithoutPunctuation = returner[0].translate(str.maketrans('', '', removeChars))
+            if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:
                 bookFormats = get_book_formats_from_book(book)
                 for bookFormat in bookFormats:
                     if bookFormat == "eBook":
@@ -28,6 +32,7 @@ def extract_books_from_result(soup, desiredTitle):
                     else:
                         returner[4] += 1
         except:
+            print("error")
             None
     return returner
 

@@ -33,4 +33,5 @@ def add_search_URLs(listOfTitles, baseLibraryURL):
 
 listOfTitles = get_book_titles_from_Goodreads()
 titlesWithURLs = add_search_URLs(listOfTitles, "https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query=")
+#titlesWithURLs = [['Salt Sugar Fat','Salt Sugar Fat: How the Food Giants Hooked Us','https://jeffcolibrary.bibliocommons.com/v2/search?query=Salt+Sugar+Fat&searchType=smart']]
 bookFinder.build_full_results_from_search(titlesWithURLs)
