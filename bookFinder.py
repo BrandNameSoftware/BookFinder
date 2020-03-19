@@ -18,8 +18,8 @@ def extract_books_from_result(soup, desiredTitle):
         try:
             title = book.find('span', attrs={'class':'title-content'}).text
             removeChars = string.punctuation + string.whitespace
-            noPunctuationDesiredTitle = title.translate(str.maketrans('', '', removeChars))
-            htmlTitleWithoutPunctuation = returner[0].translate(str.maketrans('', '', removeChars))
+            noPunctuationDesiredTitle = title.translate(str.maketrans('', '', removeChars)).lower()
+            htmlTitleWithoutPunctuation = returner[0].translate(str.maketrans('', '', removeChars)).lower()
             if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:
                 bookFormats = get_book_formats_from_book(book)
                 for bookFormat in bookFormats:
