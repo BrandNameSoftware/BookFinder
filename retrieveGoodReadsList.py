@@ -16,8 +16,9 @@ def get_book_titles_from_Goodreads():
     reviews = tree.find('reviews')
     titles = []
     for review in reviews:
-        title = review.find('book').find('title').text
-        avgRating = title = review.find('book').find('average_rating').text
+        book = review.find('book')
+        title = book.find('title').text
+        avgRating = book.find('average_rating').text
         bookData = {
             "fullTitle" : title,
             "avgRating" : avgRating

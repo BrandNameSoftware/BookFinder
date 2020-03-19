@@ -60,7 +60,6 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet):
     value_range = spreadsheetName + '!A2'
     bookDataToWrite = []
     for bookCounts, bookMeta in zip(booksWithTypeCount,booksMetaData):
-        print(bookMeta)
         bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookCounts[1],bookCounts[2],bookCounts[3],bookCounts[4],bookCounts[5]]
         bookDataToWrite.append(bookData)
     body = {
