@@ -9,28 +9,35 @@ def retrieve_book_listing_from_url(url):
     r = requests.get(url[1])
     soup = BeautifulSoup(r.text,'html.parser')
     results = extract_books_from_result(soup,url[0])
+    results["url"] = url[1]
     return results
 
 def extract_books_from_result(soup, desiredTitle):
-    # title | ebook | book | audiobook | other (CD)
-    returner = [desiredTitle, 0, 0, 0, 0]
+    returner = {
+        "shortTitle" : desiredTitle,
+        "numEBooks" : 0,
+        "numBooks" : 0,
+        "numAudioBooks" : 0,
+        "numOther" : 0,
+        "url" : ""
+    }
     for book in soup.find_all('div', attrs={'class':'cp-search-result-item-content'}):
         try:
             title = book.find('span', attrs={'class':'title-content'}).text
             removeChars = string.punctuation + string.whitespace
             noPunctuationDesiredTitle = title.translate(str.maketrans('', '', removeChars)).lower()
-            htmlTitleWithoutPunctuation = returner[0].translate(str.maketrans('', '', removeChars)).lower()
+            htmlTitleWithoutPunctuation = returner["shortTitle"].translate(str.maketrans('', '', removeChars)).lower()
             if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:
                 bookFormats = get_book_formats_from_book(book)
                 for bookFormat in bookFormats:
                     if bookFormat == "eBook":
-                        returner[1] += 1
+                        returner["numEBooks"] += 1
                     elif bookFormat == "Book":
-                        returner[2] += 1
+                        returner["numBooks"] += 1
                     elif bookFormat == "Audiobook":
-                        returner[3] += 1
+                        returner["numAudioBooks"] += 1
                     else:
-                        returner[4] += 1
+                        returner["numOther"] += 1
         except:
             print("error")
             None
@@ -53,8 +60,6 @@ def build_full_results_from_search(urls):
     allBookData = []
     for url in urls:
         currentBookData = retrieve_book_listing_from_url(url)
-        #add the search URL to the array
-        currentBookData.append(url[1])
         allBookData.append(currentBookData)
     print(allBookData)
     return allBookData
