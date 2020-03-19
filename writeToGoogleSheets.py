@@ -38,16 +38,16 @@ def getSheet():
     sheet = service.spreadsheets()
     return sheet
 
-def fillSheetWithBookData(booksWithTypeCount):
+def fillSheetWithBookData(booksWithTypeCount, booksMetaData):
     sheet = getSheet()
     purgeSheet(sheet)
-    writeBookDataToSheet(booksWithTypeCount, sheet)
+    writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet)
 
-def writeBookDataToSheet(booksWithTypeCount, sheet):
+def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet):
     #write the headers first
     values = [
         [
-            'Title', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'URL'
+            'Title', 'Avg Rating', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'URL'
         ]
     ]
     body = {
@@ -56,10 +56,15 @@ def writeBookDataToSheet(booksWithTypeCount, sheet):
     header_range = spreadsheetName + '!A1'
     result = sheet.values().update(spreadsheetId=spreadsheetID, range=header_range,valueInputOption='USER_ENTERED', body=body).execute()
 
-    #Now write all the books
+    #Now write all the books. This is assuming both arrays are sorted the same. Maybe bad assumption?
     value_range = spreadsheetName + '!A2'
+    bookDataToWrite = []
+    for bookCounts, bookMeta in zip(booksWithTypeCount,booksMetaData):
+        print(bookMeta)
+        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookCounts[1],bookCounts[2],bookCounts[3],bookCounts[4],bookCounts[5]]
+        bookDataToWrite.append(bookData)
     body = {
-        'values': booksWithTypeCount
+        'values': bookDataToWrite
     }
     result = sheet.values().update(spreadsheetId=spreadsheetID, range=value_range,valueInputOption='USER_ENTERED', body=body).execute()
 

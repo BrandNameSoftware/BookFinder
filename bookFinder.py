@@ -6,7 +6,7 @@ import sys
 import string
 
 def retrieve_book_listing_from_url(url):
-    r = requests.get(url[2])
+    r = requests.get(url[1])
     soup = BeautifulSoup(r.text,'html.parser')
     results = extract_books_from_result(soup,url[0])
     return results
@@ -54,7 +54,7 @@ def build_full_results_from_search(urls):
     for url in urls:
         currentBookData = retrieve_book_listing_from_url(url)
         #add the search URL to the array
-        currentBookData.append(url[2])
+        currentBookData.append(url[1])
         allBookData.append(currentBookData)
     print(allBookData)
     return allBookData
