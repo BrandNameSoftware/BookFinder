@@ -44,7 +44,7 @@ listOfTitles = get_book_titles_from_Goodreads()
 #    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
 #    "avgRating" : "4.2"
 #}
-l#istOfTitles = [bookMetaData]
+#listOfTitles = [bookMetaData]
 titlesWithURLs = add_search_URLs(listOfTitles, "https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query=")
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
 wtgs.fillSheetWithBookData(allBookData, listOfTitles)
