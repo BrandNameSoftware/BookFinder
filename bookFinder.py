@@ -53,6 +53,8 @@ def build_full_results_from_search(urls):
     allBookData = []
     for url in urls:
         currentBookData = retrieve_book_listing_from_url(url)
+        #add the search URL to the array
+        currentBookData.append(url[2])
         allBookData.append(currentBookData)
     print(allBookData)
     return allBookData

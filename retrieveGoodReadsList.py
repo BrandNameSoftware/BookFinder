@@ -3,6 +3,7 @@ import json
 import xml.etree.ElementTree as ET
 import urllib.parse
 import bookFinder as bookFinder
+import writeToGoogleSheets as wtgs
 
 def get_book_titles_from_Goodreads():
     with open('goodreads.credentials.json') as f:
@@ -34,4 +35,5 @@ def add_search_URLs(listOfTitles, baseLibraryURL):
 listOfTitles = get_book_titles_from_Goodreads()
 #listOfTitles = ["Stories of Your Life and Others"]
 titlesWithURLs = add_search_URLs(listOfTitles, "https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query=")
-bookFinder.build_full_results_from_search(titlesWithURLs)
+allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
+wtgs.fillSheetWithBookData(allBookData)
