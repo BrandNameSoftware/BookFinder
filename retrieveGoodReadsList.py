@@ -5,6 +5,7 @@ import urllib.parse
 import bookFinder as bookFinder
 import writeToGoogleSheets as wtgs
 import math
+from datetime import datetime
 
 def get_book_titles_from_Goodreads():
     with open('goodreads.credentials.json') as f:
@@ -41,7 +42,7 @@ def add_search_URLs(listOfTitles, desiredLibraries):
     for bookData in listOfTitles:
         title = bookData["fullTitle"]
         #strip off the () because the full title almost never returns something
-        title = title.split('()')[0]
+        title = title.split('(')[0].strip()
         #need to just get the title before a : or a ! because later on in the process, we only grab the base title from the HTML parsing
         baseTitle = title.split(':')[0].split('!')[0].strip()
         titleWithURL = [baseTitle]
@@ -57,6 +58,8 @@ def add_search_URLs(listOfTitles, desiredLibraries):
 
     return titlesWithURLs
 
+startTime = datetime.now()
+print(startTime)
 listOfTitles = get_book_titles_from_Goodreads()
 #bookMetaData = {
 #    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
@@ -67,3 +70,5 @@ desiredLibraries = wtgs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
 wtgs.fillSheetWithBookData(allBookData, listOfTitles)
+
+print(datetime.now() - startTime)

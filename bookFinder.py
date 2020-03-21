@@ -14,6 +14,7 @@ from selenium.common.exceptions import TimeoutException
 def retrieve_book_listing_from_url(url):
     desiredTitle = url[0]
     librarySearchURLs = url[1:]
+    print(desiredTitle)
     results = returner = {
         "shortTitle" : desiredTitle,
         "numEBooks" : 0,
