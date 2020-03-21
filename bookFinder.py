@@ -40,25 +40,27 @@ def retrieve_book_listing_from_url(url):
 
 def extract_books_from_denver_result(soup, desiredTitle, existingData):
     existingData.update({"denverURL" : ""})
-    for book in soup.find_all('span', attrs={'class':'nsm-e135'}):
+    for book in soup.find_all('div', attrs={'class':'c-title-detail__container'}):
         try:
             #extract a short title (bibliocommons only returns the short title)
-            baseTitle = book.text.split(':')[0].split('(')[0].split('!')[0].strip()
+            htmlTitle = book.find('span', attrs={'class':'nsm-e135'})
+            baseTitle = htmlTitle.text.split(':')[0].split('(')[0].split('!')[0].strip()
             #remove any formatting before comparison
             removeChars = string.punctuation + string.whitespace
             noPunctuationDesiredTitle = baseTitle.translate(str.maketrans('', '', removeChars)).lower()
             htmlTitleWithoutPunctuation = existingData["shortTitle"].translate(str.maketrans('', '', removeChars)).lower()
             if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:
-                bookFormats = get_book_formats_from_book(book)
-                for bookFormat in bookFormats:
-                    if bookFormat == "eBook":
-                        existingData["numEBooks"] += 1
-                    elif bookFormat == "Book":
-                        existingData["numBooks"] += 1
-                    elif bookFormat == "Audiobook":
-                        existingData["numAudioBooks"] += 1
-                    else:
-                        existingData["numOther"] += 1
+                #denver only has one format result per book
+                bookFormat = book.find('img', attrs={'class':'c-title-detail-formats__img'}).get('title')
+                print(bookFormat)
+                if bookFormat == "Ebook":
+                    existingData["numEBooks"] += 1
+                elif bookFormat == "Book":
+                    existingData["numBooks"] += 1
+                elif bookFormat == "Eaudiobook":
+                    existingData["numAudioBooks"] += 1
+                else:
+                    existingData["numOther"] += 1
         except:
             print("error")
             None
@@ -73,7 +75,7 @@ def extract_books_from_bibliocommons_result(soup, desiredTitle, existingData):
             noPunctuationDesiredTitle = title.translate(str.maketrans('', '', removeChars)).lower()
             htmlTitleWithoutPunctuation = existingData["shortTitle"].translate(str.maketrans('', '', removeChars)).lower()
             if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:
-                bookFormats = get_book_formats_from_book(book)
+                bookFormats = get_book_formats_from_bibliocommons_book(book)
                 for bookFormat in bookFormats:
                     if bookFormat == "eBook":
                         existingData["numEBooks"] += 1
@@ -88,7 +90,7 @@ def extract_books_from_bibliocommons_result(soup, desiredTitle, existingData):
             None
     return existingData
 
-def get_book_formats_from_book(book):
+def get_book_formats_from_bibliocommons_book(book):
     formats = []
     for bookFormats in book.find_all('div', attrs={'class':'format-info-main-content'}):
         titleRecord = bookFormats.text
