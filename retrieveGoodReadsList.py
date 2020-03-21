@@ -40,8 +40,10 @@ def add_search_URLs(listOfTitles, desiredLibraries):
     titlesWithURLs = []
     for bookData in listOfTitles:
         title = bookData["fullTitle"]
-        #need to just get the title before a : or a () because later on in the process, we only grab the base title from the HTML parsing
-        baseTitle = title.split(':')[0].split('(')[0].split('!')[0].strip()
+        #strip off the () because the full title almost never returns something
+        title = title.split('()')[0]
+        #need to just get the title before a : or a ! because later on in the process, we only grab the base title from the HTML parsing
+        baseTitle = title.split(':')[0].split('!')[0].strip()
         titleWithURL = [baseTitle]
         for baseLibraryURL in desiredLibraries:
             if "bibliocommons" in baseLibraryURL[1]:

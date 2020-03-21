@@ -39,8 +39,8 @@ def getSheet():
     return sheet
 
 def getDesiredLibraries():
-    desiredLibraries = [["JeffCo","https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query="],
-    ["Denver","https://catalog.denverlibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.6&by=TI&sort=RELEVANCE&limit=TOM=*&query=&page=0&searchid=1&type=Keyword&term="]]
+    desiredLibraries = [["JeffCo","https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query="]]
+    #["Denver","https://catalog.denverlibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.6&by=TI&sort=RELEVANCE&limit=TOM=*&query=&page=0&searchid=1&type=Keyword&term="]]
 
     return desiredLibraries
 
