@@ -4,26 +4,35 @@ import xml.etree.ElementTree as ET
 import urllib.parse
 import bookFinder as bookFinder
 import writeToGoogleSheets as wtgs
+import math
 
 def get_book_titles_from_Goodreads():
     with open('goodreads.credentials.json') as f:
         goodreadsCreds = json.load(f)
 
-    response = requests.get("https://www.goodreads.com/review/list?v=2&key=" + goodreadsCreds["api_key"] + "&id=" + goodreadsCreds["user_id"] + "&shelf=to-read&per_page=200")
-
-    tree = ET.fromstring(response.text)
-    #root = tree.getroot()
-    reviews = tree.find('reviews')
     titles = []
-    for review in reviews:
-        book = review.find('book')
-        title = book.find('title').text
-        avgRating = book.find('average_rating').text
-        bookData = {
-            "fullTitle" : title,
-            "avgRating" : avgRating
-        }
-        titles.append(bookData)
+    currentPageNum = 1
+    maxPages = 1
+    while currentPageNum <= maxPages:
+        response = requests.get("https://www.goodreads.com/review/list?v=2&key=" + goodreadsCreds["api_key"] + "&id=" + goodreadsCreds["user_id"] + "&shelf=to-read&per_page=200&page=" + str(currentPageNum))
+
+        tree = ET.fromstring(response.text)
+
+        reviews = tree.find('reviews')
+        if currentPageNum == 1:
+            total = reviews.attrib['total']
+            maxPages = math.ceil(int(total) / 200)
+
+        for review in reviews:
+            book = review.find('book')
+            title = book.find('title').text
+            avgRating = book.find('average_rating').text
+            bookData = {
+                "fullTitle" : title,
+                "avgRating" : avgRating
+            }
+            titles.append(bookData)
+        currentPageNum += 1
 
     return titles
 
