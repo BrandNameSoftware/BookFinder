@@ -46,13 +46,13 @@ def add_search_URLs(listOfTitles, desiredLibraries):
 
     return titlesWithURLs
 
-#listOfTitles = get_book_titles_from_Goodreads()
-bookMetaData = {
-    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
-    "avgRating" : "4.2"
-}
-listOfTitles = [bookMetaData]
+listOfTitles = get_book_titles_from_Goodreads()
+#bookMetaData = {
+#    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
+#    "avgRating" : "4.2"
+#}
+#listOfTitles = [bookMetaData]
 desiredLibraries = wtgs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
-#wtgs.fillSheetWithBookData(allBookData, listOfTitles)
+wtgs.fillSheetWithBookData(allBookData, listOfTitles)
