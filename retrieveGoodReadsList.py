@@ -27,14 +27,21 @@ def get_book_titles_from_Goodreads():
 
     return titles
 
-def add_search_URLs(listOfTitles, baseLibraryURL):
+def add_search_URLs(listOfTitles, desiredLibraries):
     titlesWithURLs = []
     for bookData in listOfTitles:
         title = bookData["fullTitle"]
         #need to just get the title before a : or a () because later on in the process, we only grab the base title from the HTML parsing
         baseTitle = title.split(':')[0].split('(')[0].split('!')[0].strip()
-        encodedTitle = urllib.parse.quote_plus(title)
-        titleWithURL = [baseTitle, baseLibraryURL + encodedTitle]
+        titleWithURL = [baseTitle]
+        for baseLibraryURL in desiredLibraries:
+            if "bibliocommons" in baseLibraryURL[1]:
+                encodedTitle = urllib.parse.quote_plus(title)
+            else:
+                encodedTitle = urllib.parse.quote(title)
+            seachString = baseLibraryURL[1] + encodedTitle
+            titleWithURL.append(seachString)
+
         titlesWithURLs.append(titleWithURL)
 
     return titlesWithURLs
@@ -45,6 +52,7 @@ listOfTitles = get_book_titles_from_Goodreads()
 #    "avgRating" : "4.2"
 #}
 #listOfTitles = [bookMetaData]
-titlesWithURLs = add_search_URLs(listOfTitles, "https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query=")
+desiredLibraries = wtgs.getDesiredLibraries()
+titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
 wtgs.fillSheetWithBookData(allBookData, listOfTitles)
