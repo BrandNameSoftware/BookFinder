@@ -28,9 +28,21 @@ def get_book_titles_from_Goodreads():
             book = review.find('book')
             title = book.find('title').text
             avgRating = book.find('average_rating').text
+            authors = book.find('authors')
+            authorsText = ""
+            for author in authors:
+                authorsText += author.find('name').text + " "
+            isHugo = False
+            shelves = review.find('shelves')
+            for shelf in shelves:
+                if shelf.attrib['name'] == "hugo-winners":
+                    isHugo = True
+                    break
             bookData = {
                 "fullTitle" : title,
-                "avgRating" : avgRating
+                "avgRating" : avgRating,
+                "author" : authorsText,
+                "isHugo" : isHugo
             }
             titles.append(bookData)
         currentPageNum += 1
@@ -41,7 +53,7 @@ def add_search_URLs(listOfTitles, desiredLibraries):
     titlesWithURLs = []
     for bookData in listOfTitles:
         title = bookData["fullTitle"]
-        #strip off the () because the full title almost never returns something
+        #strip off the ( because the full title almost never returns something
         title = title.split('(')[0].strip()
         #need to just get the title before a : or a ! because later on in the process, we only grab the base title from the HTML parsing
         baseTitle = title.split(':')[0].split('!')[0].strip()

@@ -53,7 +53,7 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet):
     #write the headers first
     values = [
         [
-            'Title', 'Avg Rating', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'Jeffco URL', 'Denver URL'
+            'Title', 'Avg Rating', 'Author', 'Is Hugo?' 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'Jeffco URL', 'Denver URL'
         ]
     ]
     body = {
@@ -66,7 +66,7 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet):
     value_range = spreadsheetName + '!A2'
     bookDataToWrite = []
     for bookCounts, bookMeta in zip(booksWithTypeCount,booksMetaData):
-        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookCounts["numEBooks"],bookCounts["numBooks"],bookCounts["numAudioBooks"],bookCounts["numOther"],bookCounts["jeffCoURL"],bookCounts["denverURL"]]
+        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookMeta["author"], bookMeta["isHugo"], bookCounts["numEBooks"],bookCounts["numBooks"],bookCounts["numAudioBooks"],bookCounts["numOther"],bookCounts["jeffCoURL"],bookCounts["denverURL"]]
         bookDataToWrite.append(bookData)
     body = {
         'values': bookDataToWrite
@@ -77,7 +77,7 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet):
 def purgeSheet(sheet):
     try:
         clear_values_request_body = {}
-        rangeToClear = spreadsheetName + '!A:G'
+        rangeToClear = spreadsheetName + '!A:I'
         request = sheet.values().clear(spreadsheetId=spreadsheetID, range=rangeToClear, body=clear_values_request_body)
         response = request.execute()
     except:
