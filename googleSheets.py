@@ -59,7 +59,6 @@ def createSheetIfItDoesntExist(sheet, sheetTitle):
         result = sheet.values().get(spreadsheetId=spreadsheetID,range=sheetRange).execute()
         values = result.get('values', [])
     except HttpError:
-        print("it didn't exist")
         requests = []
         requests.append({
             "addSheet": {
@@ -74,23 +73,26 @@ def createSheetIfItDoesntExist(sheet, sheetTitle):
         result = sheet.batchUpdate(spreadsheetId=spreadsheetID, body=body).execute()
 
 def getDesiredLibraries():
-    desiredLibraries = [["JeffCo","https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query="],
-    ["Denver","https://catalog.denverlibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.6&by=TI&sort=RELEVANCE&limit=TOM=*&query=&page=0&searchid=1&type=Keyword&term="]]
+    desiredLibraries = [["JeffCo","https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query="]]
+    #["Denver","https://catalog.denverlibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.6&by=TI&sort=RELEVANCE&limit=TOM=*&query=&page=0&searchid=1&type=Keyword&term="]]
 
     return desiredLibraries
 
-def fillSheetWithBookData(booksWithTypeCount, booksMetaData, spreadsheetName):
+def fillSheetWithBookData(booksWithTypeCount, booksMetaData, spreadsheetName, desiredLibraries):
     sheet = getSheet()
-    purgeSheet(sheet)
-    writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName)
+    purgeSheet(sheet, spreadsheetName)
+    writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName, desiredLibraries)
 
-def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName):
+def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName, desiredLibraries):
     #write the headers first
-    values = [
-        [
-            'Title', 'Avg Rating', 'Author', 'Is Hugo?' 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'Jeffco URL', 'Denver URL'
-        ]
+    columnHeaders = [
+        'Title', 'Avg Rating', 'Author', 'Is Hugo?', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types'
     ]
+
+    for desiredLibrary in desiredLibraries:
+        columnHeaders.append(desiredLibrary[0])
+
+    values = [columnHeaders]
     body = {
         'values': values
     }
@@ -101,7 +103,9 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetNa
     value_range = spreadsheetName + '!A2'
     bookDataToWrite = []
     for bookCounts, bookMeta in zip(booksWithTypeCount,booksMetaData):
-        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookMeta["author"], bookMeta["isHugo"], bookCounts["numEBooks"],bookCounts["numBooks"],bookCounts["numAudioBooks"],bookCounts["numOther"],bookCounts["jeffCoURL"],bookCounts["denverURL"]]
+        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookMeta["author"], bookMeta["isHugo"], bookCounts["numEBooks"],bookCounts["numBooks"],bookCounts["numAudioBooks"],bookCounts["numOther"]]#,bookCounts["jeffCoURL"],bookCounts["denverURL"]]
+        for library in desiredLibraries:
+            bookData.append(bookCounts[library[0]])
         bookDataToWrite.append(bookData)
     body = {
         'values': bookDataToWrite
@@ -109,12 +113,12 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetNa
     result = sheet.values().update(spreadsheetId=spreadsheetID, range=value_range,valueInputOption='USER_ENTERED', body=body).execute()
 
 
-def purgeSheet(sheet):
+def purgeSheet(sheet, spreadsheetName):
     try:
         clear_values_request_body = {}
-        rangeToClear = spreadsheetName + '!A:I'
+        rangeToClear = spreadsheetName + '!A:J'
         request = sheet.values().clear(spreadsheetId=spreadsheetID, range=rangeToClear, body=clear_values_request_body)
         response = request.execute()
     except:
-        print("error")
+        print("purgeSheet - error")
         None
