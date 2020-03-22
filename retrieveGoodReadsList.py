@@ -72,7 +72,7 @@ def add_search_URLs(listOfTitles, desiredLibraries):
 
 startTime = datetime.now()
 print(startTime)
-goodreadsListID = gs.getGoodreadsListID()
+goodreadsListID, spreadsheetName = gs.getGoodreadsListID()
 listOfTitles = get_book_titles_from_Goodreads(goodreadsListID)
 #bookMetaData = {
 #    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
@@ -82,6 +82,6 @@ listOfTitles = get_book_titles_from_Goodreads(goodreadsListID)
 desiredLibraries = gs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
-gs.fillSheetWithBookData(allBookData, listOfTitles)
+gs.fillSheetWithBookData(allBookData, listOfTitles, spreadsheetName)
 
 print(datetime.now() - startTime)

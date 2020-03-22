@@ -11,7 +11,6 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # The ID and range of a sample spreadsheet.
 spreadsheetID = '13Of_OBJgAeYbLtJurRItTpbZ5kEGN1UBjIqX1RrEYNU'
-spreadsheetName = 'Library List'
 
 def getSheet():
     creds = None
@@ -52,7 +51,7 @@ def getGoodreadsListID():
     spreadsheetName = values[1][1]
     createSheetIfItDoesntExist(sheet, values[1][1])
 
-    return goodReadsUserID
+    return goodReadsUserID, spreadsheetName
 
 def createSheetIfItDoesntExist(sheet, sheetTitle):
     try:
@@ -80,12 +79,12 @@ def getDesiredLibraries():
 
     return desiredLibraries
 
-def fillSheetWithBookData(booksWithTypeCount, booksMetaData):
+def fillSheetWithBookData(booksWithTypeCount, booksMetaData, spreadsheetName):
     sheet = getSheet()
     purgeSheet(sheet)
-    writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet)
+    writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName)
 
-def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet):
+def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName):
     #write the headers first
     values = [
         [
