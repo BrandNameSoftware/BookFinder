@@ -73,8 +73,17 @@ def createSheetIfItDoesntExist(sheet, sheetTitle):
         result = sheet.batchUpdate(spreadsheetId=spreadsheetID, body=body).execute()
 
 def getDesiredLibraries():
-    desiredLibraries = [["JeffCo","https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query="]]
-    #["Denver","https://catalog.denverlibrary.org/search/searchresults.aspx?ctx=1.1033.0.0.6&by=TI&sort=RELEVANCE&limit=TOM=*&query=&page=0&searchid=1&type=Keyword&term="]]
+    sheet = getSheet()
+
+    #get the ID
+    sheetRange = "Setup!A7:B12"
+    result = sheet.values().get(spreadsheetId=spreadsheetID,range=sheetRange).execute()
+    values = result.get('values', [])
+    desiredLibraries = []
+    for value in values:
+        if value:
+            library = [value[0], value[1]]
+            desiredLibraries.append(library)
 
     return desiredLibraries
 
