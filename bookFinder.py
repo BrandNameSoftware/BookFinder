@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import TimeoutException
 
-def retrieve_book_listing_from_url(url):
+def retrieve_book_listing_from_url(url, desiredLibraries):
     desiredTitle = url[0]
     librarySearchURLs = url[1:]
     print(desiredTitle)
@@ -23,12 +23,12 @@ def retrieve_book_listing_from_url(url):
         "numOther" : 0
     }
     for libraryURL in librarySearchURLs:
+        libraryKey = findMatchingLibraryKey(libraryURL, desiredLibraries)
+        results.update({libraryKey : ""})
         if "bibliocommons" in libraryURL:
             r = requests.get(url[1])
             soup = BeautifulSoup(r.text,'html.parser')
-            results, foundBook = extract_books_from_bibliocommons_result(soup,desiredTitle, results)
-            if foundBook:
-                results["jeffCoURL"] = libraryURL
+            results, foundBook = extract_books_from_bibliocommons_result(soup, desiredTitle, results)
         else:
             options = Options()
             options.headless = True
@@ -44,12 +44,21 @@ def retrieve_book_listing_from_url(url):
                 #this will eat the timeout exception that happens when no search results are found
                 broswer.quit()
             results, foundBook = extract_books_from_denver_result(soup, desiredTitle, results)
-            if foundBook:
-                results["denverURL"] = libraryURL
+        if foundBook:
+            results[libraryKey] = libraryURL
     return results
 
+def findMatchingLibraryKey(libraryURL, desiredLibraries):
+    libraryKey = ""
+    baseLibraryURL = libraryURL.split('search')[0]
+    for desiredLibrary in desiredLibraries:
+        currentLibraryBaseURL = desiredLibrary[1].split('search')[0]
+        if baseLibraryURL == currentLibraryBaseURL:
+            libraryKey = desiredLibrary[0]
+
+    return libraryKey
+
 def extract_books_from_denver_result(soup, desiredTitle, existingData):
-    existingData.update({"denverURL" : ""})
     foundBook = False
     for book in soup.find_all('div', attrs={'class':'c-title-detail__container'}):
         try:
@@ -73,12 +82,11 @@ def extract_books_from_denver_result(soup, desiredTitle, existingData):
                 else:
                     existingData["numOther"] += 1
         except:
-            print("error")
+            print("extract_books_from_denver_result - error")
             None
     return existingData, foundBook
 
 def extract_books_from_bibliocommons_result(soup, desiredTitle, existingData):
-    existingData.update({"jeffCoURL" : ""})
     foundBook = False
     for book in soup.find_all('div', attrs={'class':'cp-search-result-item-content'}):
         try:
@@ -117,10 +125,10 @@ def get_book_formats_from_bibliocommons_book(book):
 
     return formats
 
-def build_full_results_from_search(urls):
+def build_full_results_from_search(urls, desiredLibraries):
     allBookData = []
     for url in urls:
-        currentBookData = retrieve_book_listing_from_url(url)
+        currentBookData = retrieve_book_listing_from_url(url, desiredLibraries)
         allBookData.append(currentBookData)
     print(allBookData)
     return allBookData

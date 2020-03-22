@@ -76,12 +76,14 @@ goodreadsListID, spreadsheetName = gs.getGoodreadsListID()
 listOfTitles = get_book_titles_from_Goodreads(goodreadsListID)
 #bookMetaData = {
 #    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
-#    "avgRating" : "4.2"
+#    "avgRating" : "4.2",
+#    "author" : "Michael Greger",
+#    "isHugo" : False
 #}
 #listOfTitles = [bookMetaData]
 desiredLibraries = gs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
-allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
-gs.fillSheetWithBookData(allBookData, listOfTitles, spreadsheetName)
+allBookData = bookFinder.build_full_results_from_search(titlesWithURLs, desiredLibraries)
+gs.fillSheetWithBookData(allBookData, listOfTitles, spreadsheetName, desiredLibraries)
 
 print(datetime.now() - startTime)
