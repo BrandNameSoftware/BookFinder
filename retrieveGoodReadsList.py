@@ -3,11 +3,11 @@ import json
 import xml.etree.ElementTree as ET
 import urllib.parse
 import bookFinder as bookFinder
-import writeToGoogleSheets as wtgs
+import googleSheets as gs
 import math
 from datetime import datetime
 
-def get_book_titles_from_Goodreads():
+def get_book_titles_from_Goodreads(goodreadsListID):
     with open('goodreads.credentials.json') as f:
         goodreadsCreds = json.load(f)
 
@@ -15,7 +15,7 @@ def get_book_titles_from_Goodreads():
     currentPageNum = 1
     maxPages = 1
     while currentPageNum <= maxPages:
-        response = requests.get("https://www.goodreads.com/review/list?v=2&key=" + goodreadsCreds["api_key"] + "&id=" + goodreadsCreds["user_id"] + "&shelf=to-read&per_page=200&page=" + str(currentPageNum))
+        response = requests.get("https://www.goodreads.com/review/list?v=2&key=" + goodreadsCreds["api_key"] + "&id=" + goodreadsListID + "&shelf=to-read&per_page=200&page=" + str(currentPageNum))
 
         tree = ET.fromstring(response.text)
 
@@ -72,15 +72,16 @@ def add_search_URLs(listOfTitles, desiredLibraries):
 
 startTime = datetime.now()
 print(startTime)
-listOfTitles = get_book_titles_from_Goodreads()
+goodreadsListID = gs.getGoodreadsListID()
+listOfTitles = get_book_titles_from_Goodreads(goodreadsListID)
 #bookMetaData = {
 #    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
 #    "avgRating" : "4.2"
 #}
 #listOfTitles = [bookMetaData]
-desiredLibraries = wtgs.getDesiredLibraries()
+desiredLibraries = gs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
-wtgs.fillSheetWithBookData(allBookData, listOfTitles)
+gs.fillSheetWithBookData(allBookData, listOfTitles)
 
 print(datetime.now() - startTime)

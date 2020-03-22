@@ -4,6 +4,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -37,6 +38,41 @@ def getSheet():
     # Call the Sheets API
     sheet = service.spreadsheets()
     return sheet
+
+def getGoodreadsListID():
+    sheet = getSheet()
+
+    #get the ID
+    sheetRange = "Setup!A1:B2"
+    result = sheet.values().get(spreadsheetId=spreadsheetID,range=sheetRange).execute()
+    values = result.get('values', [])
+    goodReadsUserID = values[0][1]
+
+    #check if there's a sheet if the proper name and create it if it doesn't exist
+    spreadsheetName = values[1][1]
+    createSheetIfItDoesntExist(sheet, values[1][1])
+
+    return goodReadsUserID
+
+def createSheetIfItDoesntExist(sheet, sheetTitle):
+    try:
+        sheetRange = sheetTitle + "!A1"
+        result = sheet.values().get(spreadsheetId=spreadsheetID,range=sheetRange).execute()
+        values = result.get('values', [])
+    except HttpError:
+        print("it didn't exist")
+        requests = []
+        requests.append({
+            "addSheet": {
+                "properties": {
+                    'title' : sheetTitle
+                }
+            }
+        })
+        body = {
+            'requests': requests
+        }
+        result = sheet.batchUpdate(spreadsheetId=spreadsheetID, body=body).execute()
 
 def getDesiredLibraries():
     desiredLibraries = [["JeffCo","https://jeffcolibrary.bibliocommons.com/v2/search?searchType=smart&query="],
@@ -83,6 +119,3 @@ def purgeSheet(sheet):
     except:
         print("error")
         None
-
-if __name__ == '__main__':
-    fillSheetWithBookData()
