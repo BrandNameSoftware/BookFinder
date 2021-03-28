@@ -74,15 +74,15 @@ def add_search_URLs(listOfTitles, desiredLibraries):
 startTime = datetime.now()
 print(startTime)
 goodreadsListID, spreadsheetName = gs.getGoodreadsListID()
-#listOfTitles = gs.get_book_titles_from_CSV()
+listOfTitles = gs.get_book_titles_from_CSV()
 
-bookMetaData = {
-    "fullTitle" : "Hominids",
-    "avgRating" : "3.7",
-     "isHugo" : "False",
-     "author" : "Robert J. Sawyer"
-}
-listOfTitles = [bookMetaData]
+#bookMetaData = {
+#    "fullTitle" : "Hominids",
+#    "avgRating" : "3.7",
+#     "isHugo" : "False",
+#     "author" : "Robert J. Sawyer"
+#}
+#listOfTitles = [bookMetaData]
 
 desiredLibraries = gs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)

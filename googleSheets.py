@@ -61,23 +61,26 @@ def get_book_titles_from_CSV():
     sheet = getSheet()
 
     #get the ID
-    sheetRange = "Import from Goodreads!B2:R"
+    sheetRange = "Import from Goodreads!B2:S"
     result = sheet.values().get(spreadsheetId=spreadsheetID,range=sheetRange).execute()
     values = result.get('values', [])
 
     for book in values:
-        title = book[0]
-        avgRating = book[7]
-        authors = book[1]
-        authorsText = ""
-        isHugo = False
-        bookData = {
-            "fullTitle" : title,
-            "avgRating" : avgRating,
-            "author" : authorsText,
-            "isHugo" : isHugo
-        }
-        titles.append(bookData)
+        #only worry about books on "to-read"
+        if "to-read" in book[17]:
+            title = book[0]
+            avgRating = book[7]
+            authors = book[1]
+            isHugo = False
+            if "hugo-winners" in book[15]:
+                isHugo = True
+            bookData = {
+                "fullTitle" : title,
+                "avgRating" : avgRating,
+                "author" : authors,
+                "isHugo" : isHugo
+            }
+            titles.append(bookData)
 
     return titles
 
@@ -122,11 +125,7 @@ def fillSheetWithBookData(booksWithTypeCount, booksMetaData, spreadsheetName, de
 
 def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName, desiredLibraries):
     #write the headers first
-    values = [
-        [
-            'Title', 'Avg Rating', 'Author', 'Is Hugo?', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'Jeffco URL', 'Denver URL'
-        ]
-    ]
+    columnHeaders = ['Title', 'Avg Rating', 'Author', 'Is Hugo?', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types' ]
 
     for desiredLibrary in desiredLibraries:
         columnHeaders.append(desiredLibrary[0])
