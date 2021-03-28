@@ -18,6 +18,7 @@ def retrieve_book_listing_from_url(url, desiredLibraries):
     results = returner = {
         "shortTitle" : desiredTitle,
         "numEBooks" : 0,
+        "hasOverdrive" : False,
         "numBooks" : 0,
         "numAudioBooks" : 0,
         "numOther" : 0
@@ -97,11 +98,13 @@ def extract_books_from_bibliocommons_result(soup, desiredTitle, existingData):
             htmlTitleWithoutPunctuation = existingData["shortTitle"].translate(str.maketrans('', '', removeChars)).lower()
             if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:
                 bookFormats = get_book_formats_from_bibliocommons_book(book)
+                hasOverdrive = check_if_has_overdrive(book)
                 foundBook = True
                 #bibliocommons returns multiple formats per book
                 for bookFormat in bookFormats:
                     if bookFormat == "eBook":
                         existingData["numEBooks"] += 1
+                        existingData["hasOverdrive"] |= hasOverdrive
                     elif bookFormat == "Book":
                         existingData["numBooks"] += 1
                     elif bookFormat == "Audiobook":
@@ -126,10 +129,17 @@ def get_book_formats_from_bibliocommons_book(book):
 
     return formats
 
+#I feel like there's a better way, but it's after 10:00 and I'm lazy
+def check_if_has_overdrive(book):
+    hasOverdrive = False
+    if book.findAll(text='OVERDRIVE'):
+        hasOverdrive = True
+
+    return hasOverdrive
+
 def build_full_results_from_search(urls, desiredLibraries):
     allBookData = []
     for url in urls:
         currentBookData = retrieve_book_listing_from_url(url, desiredLibraries)
         allBookData.append(currentBookData)
-    print(allBookData)
     return allBookData

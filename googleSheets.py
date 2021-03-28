@@ -125,7 +125,7 @@ def fillSheetWithBookData(booksWithTypeCount, booksMetaData, spreadsheetName, de
 
 def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName, desiredLibraries):
     #write the headers first
-    columnHeaders = ['Title', 'Avg Rating', 'Author', 'Is Hugo?', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types' ]
+    columnHeaders = ['Title', 'Avg Rating', 'Author', 'Is Hugo?', 'Num eBooks', 'Has Overdrive?', 'Num physical books', 'Num audio books', 'Num other types' ]
 
     for desiredLibrary in desiredLibraries:
         columnHeaders.append(desiredLibrary[0])
@@ -141,7 +141,7 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetNa
     value_range = spreadsheetName + '!A2'
     bookDataToWrite = []
     for bookCounts, bookMeta in zip(booksWithTypeCount,booksMetaData):
-        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookMeta["author"], bookMeta["isHugo"], bookCounts["numEBooks"],bookCounts["numBooks"],bookCounts["numAudioBooks"],bookCounts["numOther"]]#,bookCounts["jeffCoURL"],bookCounts["denverURL"]]
+        bookData = [bookMeta["fullTitle"], bookMeta["avgRating"], bookMeta["author"], bookMeta["isHugo"], bookCounts["numEBooks"], bookCounts["hasOverdrive"], bookCounts["numBooks"],bookCounts["numAudioBooks"],bookCounts["numOther"]]#,bookCounts["jeffCoURL"],bookCounts["denverURL"]]
         for library in desiredLibraries:
             bookData.append(bookCounts[library[0]])
         bookDataToWrite.append(bookData)
@@ -154,7 +154,7 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetNa
 def purgeSheet(sheet, spreadsheetName):
     try:
         clear_values_request_body = {}
-        rangeToClear = spreadsheetName + '!A:J'
+        rangeToClear = spreadsheetName + '!A:K'
         request = sheet.values().clear(spreadsheetId=spreadsheetID, range=rangeToClear, body=clear_values_request_body)
         response = request.execute()
     except Exception as e:
