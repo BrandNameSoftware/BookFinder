@@ -9,7 +9,7 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-# The ID and range of a sample spreadsheet.
+# The ID of the spreadsheet.
 spreadsheetID = '13Of_OBJgAeYbLtJurRItTpbZ5kEGN1UBjIqX1RrEYNU'
 
 def getSheet():
@@ -49,9 +49,37 @@ def getGoodreadsListID():
 
     #check if there's a sheet if the proper name and create it if it doesn't exist
     spreadsheetName = values[1][1]
-    createSheetIfItDoesntExist(sheet, values[1][1])
+    createSheetIfItDoesntExist(sheet, spreadsheetName)
 
     return goodReadsUserID, spreadsheetName
+
+#get all the books in the CSV
+def get_book_titles_from_CSV():
+
+    titles = []
+
+    sheet = getSheet()
+
+    #get the ID
+    sheetRange = "Import from Goodreads!B2:R"
+    result = sheet.values().get(spreadsheetId=spreadsheetID,range=sheetRange).execute()
+    values = result.get('values', [])
+
+    for book in values:
+        title = book[0]
+        avgRating = book[7]
+        authors = book[1]
+        authorsText = ""
+        isHugo = False
+        bookData = {
+            "fullTitle" : title,
+            "avgRating" : avgRating,
+            "author" : authorsText,
+            "isHugo" : isHugo
+        }
+        titles.append(bookData)
+
+    return titles
 
 def createSheetIfItDoesntExist(sheet, sheetTitle):
     try:
@@ -81,14 +109,14 @@ def getDesiredLibraries():
 
 def fillSheetWithBookData(booksWithTypeCount, booksMetaData, spreadsheetName):
     sheet = getSheet()
-    purgeSheet(sheet)
+    purgeSheet(sheet, spreadsheetName)
     writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName)
 
 def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetName):
     #write the headers first
     values = [
         [
-            'Title', 'Avg Rating', 'Author', 'Is Hugo?' 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'Jeffco URL', 'Denver URL'
+            'Title', 'Avg Rating', 'Author', 'Is Hugo?', 'Num eBooks', 'Num physical books', 'Num audio books', 'Num other types', 'Jeffco URL', 'Denver URL'
         ]
     ]
     body = {
@@ -109,12 +137,12 @@ def writeBookDataToSheet(booksWithTypeCount, booksMetaData, sheet, spreadsheetNa
     result = sheet.values().update(spreadsheetId=spreadsheetID, range=value_range,valueInputOption='USER_ENTERED', body=body).execute()
 
 
-def purgeSheet(sheet):
+def purgeSheet(sheet, spreadsheetName):
     try:
         clear_values_request_body = {}
-        rangeToClear = spreadsheetName + '!A:I'
+        rangeToClear = spreadsheetName + '!A:J'
         request = sheet.values().clear(spreadsheetId=spreadsheetID, range=rangeToClear, body=clear_values_request_body)
         response = request.execute()
-    except:
-        print("error")
+    except Exception as e:
+        print(e)
         None

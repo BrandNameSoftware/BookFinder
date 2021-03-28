@@ -7,6 +7,7 @@ import googleSheets as gs
 import math
 from datetime import datetime
 
+#old goodreads way to get it from their API
 def get_book_titles_from_Goodreads(goodreadsListID):
     with open('goodreads.credentials.json') as f:
         goodreadsCreds = json.load(f)
@@ -73,12 +74,16 @@ def add_search_URLs(listOfTitles, desiredLibraries):
 startTime = datetime.now()
 print(startTime)
 goodreadsListID, spreadsheetName = gs.getGoodreadsListID()
-listOfTitles = get_book_titles_from_Goodreads(goodreadsListID)
-#bookMetaData = {
-#    "fullTitle" : "How Not to Die: Discover the Foods Scientifically Proven to Prevent and Reverse Disease",
-#    "avgRating" : "4.2"
-#}
-#listOfTitles = [bookMetaData]
+#listOfTitles = gs.get_book_titles_from_CSV()
+
+bookMetaData = {
+    "fullTitle" : "Hominids",
+    "avgRating" : "3.7",
+     "isHugo" : "False",
+     "author" : "Robert J. Sawyer"
+}
+listOfTitles = [bookMetaData]
+
 desiredLibraries = gs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
 allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
