@@ -86,7 +86,7 @@ listOfTitles = [bookMetaData]
 
 desiredLibraries = gs.getDesiredLibraries()
 titlesWithURLs = add_search_URLs(listOfTitles, desiredLibraries)
-allBookData = bookFinder.build_full_results_from_search(titlesWithURLs)
-gs.fillSheetWithBookData(allBookData, listOfTitles, spreadsheetName)
+allBookData = bookFinder.build_full_results_from_search(titlesWithURLs, desiredLibraries)
+gs.fillSheetWithBookData(allBookData, listOfTitles, spreadsheetName, desiredLibraries)
 
 print(datetime.now() - startTime)
