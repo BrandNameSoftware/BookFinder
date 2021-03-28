@@ -67,6 +67,7 @@ def extract_books_from_denver_result(soup, desiredTitle, existingData):
             baseTitle = htmlTitle.text.split(':')[0].split('(')[0].split('!')[0].strip()
             #remove any formatting before comparison
             removeChars = string.punctuation + string.whitespace
+            #I think these variable names are switched, but it's working so I'm not touching it
             noPunctuationDesiredTitle = baseTitle.translate(str.maketrans('', '', removeChars)).lower()
             htmlTitleWithoutPunctuation = existingData["shortTitle"].translate(str.maketrans('', '', removeChars)).lower()
             if noPunctuationDesiredTitle == htmlTitleWithoutPunctuation:

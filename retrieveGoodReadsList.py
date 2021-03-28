@@ -61,9 +61,9 @@ def add_search_URLs(listOfTitles, desiredLibraries):
         titleWithURL = [baseTitle]
         for baseLibraryURL in desiredLibraries:
             if "bibliocommons" in baseLibraryURL[1]:
-                encodedTitle = urllib.parse.quote_plus(title)
+                encodedTitle = urllib.parse.quote_plus(baseTitle)
             else:
-                encodedTitle = urllib.parse.quote(title)
+                encodedTitle = urllib.parse.quote(baseTitle)
             seachString = baseLibraryURL[1] + encodedTitle
             titleWithURL.append(seachString)
 
